@@ -3,13 +3,6 @@ import robocode.*;
 import java.util.HashMap;
 import java.awt.Color;
 
-/*
-Details: 
-The bot is designed to be a jack of all trades. Its aim is to be able to handle everything efficently 
-by incorperating a radar that is modelled off the concepts of modern radars, by including a unique pattern
-that tries to avoid predictability and by having a gun that knows what to shoot.
-*/
-
 
 public class ApexusBot extends Robot {
 	
@@ -22,7 +15,7 @@ public class ApexusBot extends Robot {
     private String lastTarget = null;
     private long lastRadarSweepTime = 0;
     
-    // Movement control and delay
+    // Movement control
     private int moveDirection = 1;
     private long lastMoveTime = 0;
     private static final int MOVE_COOLDOWN = 5;
@@ -30,9 +23,9 @@ public class ApexusBot extends Robot {
     // Wall avoidance
     private static final double WALL_MARGIN = 50;
     
-    /*
-        Inner class to store enemy data
-    */
+    /**
+     * Inner class to store enemy data
+     */
     class EnemyData {
         double bearing;
         double distance;
@@ -72,7 +65,6 @@ public class ApexusBot extends Robot {
             this.time = currentTime;
             this.lastSeen = currentTime;
 
-            //Calaculating the bot's position on the X and Y axis
             double absoluteBearing = Math.toRadians(bot.getHeading()) + e.getBearingRadians();
             this.x = bot.getX() + Math.sin(absoluteBearing) * e.getDistance();
             this.y = bot.getY() + Math.cos(absoluteBearing) * e.getDistance();
@@ -118,7 +110,7 @@ public class ApexusBot extends Robot {
                 turnRight(20);
                 ahead(80);
             }
-                //sweeping for target if no other target is available or if previous target is lost
+
             if (getOthers() > 1 && getTime() - lastRadarSweepTime > 40) {
                 lastRadarSweepTime = getTime();
                 turnRadarRight(360);
@@ -231,15 +223,15 @@ public class ApexusBot extends Robot {
             }
         }
         
-        // IMPROVED FIRE CONTROL 
+        // === V4's IMPROVED FIRE CONTROL ===
         if (enemyName.equals(currentTarget)) {
             fireControlSystem(enemy);
         }
           
     }
 	
-	/*
-        FIRE CONTROL SYSTEM - High DPS, Quick response
+	/**
+     * V4's FIRE CONTROL SYSTEM - High DPS, instant response
     */
 	private void fireControlSystem(EnemyData enemy) {
         // Calculate optimal bullet power
@@ -259,7 +251,7 @@ public class ApexusBot extends Robot {
 		
 		double remaining = normalizeBearing(predictedDegrees - getGunHeading());
         
-        // AGGRESSIVE FIRING
+        // === AGGRESSIVE FIRING ===
         // Fire if reasonably aligned
         if (getGunHeat() == 0 && enemy.energy > 0 && getEnergy() > firePower) {
             double aimAllowance;
@@ -276,8 +268,8 @@ public class ApexusBot extends Robot {
         }
     }
 
-	/*
-        Reset movement pattern history
+	/**
+     * Reset movement pattern history
      */
     private void executeSmoothMovement(EnemyData enemy) {
         double enemyAngle = Math.atan2(enemy.x - getX(), enemy.y - getY());
@@ -377,7 +369,7 @@ public class ApexusBot extends Robot {
     }
     
     /**
-     * AGGRESSIVE bullet power for high DPS
+     * V4's AGGRESSIVE bullet power for high DPS
      */
     private double calculateBulletPower(double distance, double enemyEnergy) {
         // Low energy conservation
