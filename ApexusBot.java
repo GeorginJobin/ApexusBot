@@ -188,6 +188,7 @@ public class ApexusBot extends Robot {
      * Called whenever we scan another robot.
      */
     public void onScannedRobot(ScannedRobotEvent e) {
+		if (e.isSentryRobot()) return;
         String enemyName = e.getName();
 
         // Update/build enemy data
